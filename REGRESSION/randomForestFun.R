@@ -71,7 +71,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,bar
   
 
     
-    cat(paste("Running ", nb.it, "models in cross validation\n"))
+    cat(paste("Running", nb.it, "models in cross validation\n"))
     
     Sys.time()->start
     cForestModels <- sfLapply(1:nb.it,cForestCaret)
@@ -223,8 +223,9 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,bar
     {
       if(!is.null(unlist(profiles[namSort[i]])))
       {  
-        png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width = hei , hei = wid, pointsize = 20)
-        multiProfile(data,profiles,namSort[i])
+        png(paste0(dirSave[j], "MultiProfile_", namSort[i], ".png"), type='cairo', width=8 , hei=8, units='in', pointsize=25, res=300)
+        png('//dapadfs/workspace_cluster_6/TRANSVERSAL_PROJECTS/MADR/COMPONENTE_2/ASBAMA/RESULTADOS/Identificacion_factores_limitantes/_informe_parcial_diciembre/_run10_cobana_cosechas_sin_fert_clima_ciclo_completo/VARIETY_ANALYSIS/All/RANDOM_FOREST/Test.png', width=8 , hei=8, units='in', pointsize=20, res=300)
+        multiProfile(data, profiles, namSort[i], yla='Peso del racimo (kg)')
         dev.off()
       } else{print(paste("Few profiles references for:",namSort[i]))}
     }
