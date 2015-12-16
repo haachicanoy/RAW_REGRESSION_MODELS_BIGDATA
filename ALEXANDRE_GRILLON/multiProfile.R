@@ -28,7 +28,6 @@ multiProfile <- function(data, profiles, variable, xlim0=NULL, xla=variable, yla
     
   } else {
     p <- as.data.frame(profiles[variable])
-    plot.new()
     par(mar=c(5, 4, 2, 2) + 0.1)
     plot(x=var, y=data[,ncol(data)],
          xlab=xla, ylab=yla, pch=19,
