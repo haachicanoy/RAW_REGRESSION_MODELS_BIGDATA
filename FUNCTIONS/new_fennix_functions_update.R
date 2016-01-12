@@ -196,9 +196,12 @@ createFolders <- function(dirFol,variety)
 
 
 
-descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,ylabel = "Rendimiento (kg/ha)",smooth=FALSE,smoothInd=NULL,ghrp="box",res=NA)
+descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
+                        ylabel = "Rendimiento (kg/ha)",smooth=FALSE,
+                        smoothInd=NULL,ghrp="box",res=NA,sztxt=15,szlbls = 15,
+                        colbox="skyblue",colpts="greenyellow",colsmot="red",
+                        szpts=5)
 {
-  print("Don't be scare about errors and warnings messages, check that images have been created in DESCRIPTIVE_ANALYSIS folder")
   namsDataSet <- names(dataSet)  
   
   if(variety!="All")
@@ -231,62 +234,99 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,ylabel = "Re
   nInputs <- ncol(cuantVar)
   namCuanInputs <- names(cuantVar)[-nInputs]
   
-  
+  tme <- theme_bw() +theme(legend.position="none")+
+      theme(axis.title.x = element_text(size = szlbls),
+            axis.title.y = element_text(size = szlbls),
+            axis.text.x =  element_text(size = sztxt),
+            axis.text.y =  element_text(size = sztxt,angle = 90, hjust = 0.5))
+      
     for(namC in namCuanInputs)
     {  
+    
+       plotData <- data.frame(x=cuantVar[,namC],y=outputVar)
+       
+       plo <- ggplot()+ geom_point(aes(x=x,y=y),data=plotData,colour="grey4",
+                       fill=colpts,size=szpts,shape = 21,alpha =0.6)+
+           ylab(ylabel) + xlab(namC) +tme
+       
+        
+       box <- qplot(y=x,x=namC,alpha = I(0.00001),data=plotData)+geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(namC)+tme
+       
       if(!isTRUE(smooth))
       {
-        png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=730,height=340,res=res)
-        layout(matrix(c(1,2),ncol=2,nrow=1))
-        par(oma = c(0, 0, 3, 0))
-        plot(cuantVar[,namC],outputVar,ylab = ylabel,xlab=namC,pch=21,bg="blue",cex=1.2)    
-        boxplot(cuantVar[,namC],col="skyblue",ylab = namC )
-        mtext(paste0(variety," - ",namC),outer=T,font=2)
+          
+        png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
+        grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
+                     " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
         dev.off()
       }else{
 
-  
+          png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
 
-      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=730,height=340,res=res)
-      layout(matrix(c(1,2),ncol=2,nrow=1))
-      par(oma = c(0, 0, 3, 0))
-      plot(cuantVar[,namC],outputVar,ylab=ylabel,xlab=namC,pch=21,bg="blue",cex=1.2)    
-      
-     
-        
-        lo <- loess(outputVar~cuantVar[,namC])
+        lo <- suppressWarnings(loess(outputVar~cuantVar[,namC]))
         xl <- seq(min(cuantVar[,namC]),max(cuantVar[,namC]), (max(cuantVar[,namC]) - min(cuantVar[,namC]))/1000)
-        predicLoess <- try(predict(lo,xl))
+        predicLoess <- try(predict(lo,xl), silent = T)
+                    
         
-        if(is(predicLoess)[1]!="try-error"){lines(xl,predicLoess , col='red', lwd=2) }else{
-        
-          lo <- lowess(outputVar~cuantVar[,namC])
-          lines(lo,lwd=2,col="red")
-      
-        }
+            if(is(predicLoess)[1]!="try-error")
+                {  loesMat <- data.frame(xl,predicLoess)
+                    plo <- plo + geom_line(aes(x=xl,y=predicLoess),lwd=1.3,
+                                           col=colsmot,data=loesMat) 
+
+                }else{
+                    lows <- lowess(outputVar~cuantVar[,namC])
+                    lowsMat <- data.frame(x=lows$x,y=lows$y)
+                    plo <- plo + geom_line(aes(x=x,y=y),lwd=1.3,col=colsmot,
+                                           data=lowsMat)
+            }
+              
+      }
       if(ghrp=="box")
-      {  
-        boxplot(cuantVar[,namC],col="skyblue",ylab=namC)
+      {
+          grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
+                   " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
     
         }else if(ghrp=="varPoints"){
-          plot(dataSet[,namC],dataSet[,output],ylab=ylabel,xlab=namC,col="gray",cex=1,pch=16)
-        points(cuantVar[,namC],outputVar,pch=16,col="red")
+            
+            datf  <- data.frame(x=dataSet[,namC],y=dataSet[,output])
+            datf1 <- data.frame(x=cuantVar[,namC],y=outputVar)
+
+            plo1 <- ggplot() + geom_point(aes(x=x,y=y),colour="grey4",
+                                          fill="grey",data=datf,size=szpts,
+                                          shape = 21,alpha =0.6)
+            plo1 <- plo1 + geom_point(aes(x=x,y=y),data=datf1,
+                                      colour="grey4",fill="red",
+                                      size=szpts,shape = 21,alpha =0.6)
+            plo1 <- plo1 + theme_bw()+ ylab(ylabel) + xlab(namC) +tme
+            
+            grid.arrange(plo1,box,ncol = 2,top = textGrob(paste0(variety,
+            " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))  
+
+            
       }else{stop("ghrp Invlid")}
-      mtext(paste(variety,"_",namC),outer=T,font=2)
+
       dev.off()
     }
-  }
  
- 
-  png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_Yield.png"),width=730,height=340,res=res)
+  png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_Yield.png"),width=775,
+      height=280,res=res)
+  otpvar <- data.frame(x=outputVar)
+  
+  ydplot <- ggplot()+geom_histogram(aes(x=x),data=otpvar,
+                          breaks=seq(min(outputVar), max(outputVar),
+                                     length.out=nclass.Sturges(outputVar)),
+                          colour = "gray1",fill=colbox
+                          )+tme+xlab(ylabel)+ylab("Frecuencia")
+  
+  boxdf <- data.frame(x=ylabel,y=outputVar)
+  box <- qplot(y=y,x=x,alpha = I(0.00001),data=boxdf)+
+      geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(ylabel)+tme
   
   
-  layout(matrix(c(1,2),ncol=2,nrow=1))
-  par(oma = c(0, 0, 3, 0)) 
-  hist(outputVar,col="skyblue",main="",xlab=ylabel)
-  boxplot(outputVar,col="skyblue",ylab=ylabel)
-  mtext(paste(variety,"_Yield"),outer=T,font=2)
-  dev.off()
+  grid.arrange(ydplot,box,ncol = 2,top = textGrob(paste(variety,"_Yield"),
+                gp=gpar(cex=1.1,fontface = 'bold')))
+  
+ dev.off()
  
 
   summ <- completeSummary(dataSetV)
@@ -296,21 +336,26 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,ylabel = "Re
   { 
     namCualVar <- names(cualVar)
     
-    write.table(summ[[1]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=F,sep=",",row.names=F)
+    write.table(summ[[1]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,
+                     "summaryVariables.csv"),append=F,sep=",",row.names=F)
     
     for(namC in namCualVar)
     {
-      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=730,height=340,res=res)
-      layout(matrix(c(1,2),ncol=2,nrow=1))
-      par(oma = c(0, 0, 3, 0))
-    
-      stripchart(outputVar~cualVar[,namC],                
-                 vertical = TRUE, col="blue" ,pch=16,las=3,ylab=ylabel)
+      dp <- data.frame(x=cualVar[,namC],y=outputVar)
+      dotplot <- ggplot() + geom_dotplot(aes(x=x,y=y),data=dp,
+                  binaxis = "y",stackdir = "center",colour="grey4",
+                  fill=colpts,dotsize = 1.5,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
+                  theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
-      boxplot(outputVar~cualVar[,namC],
-              vertical = TRUE, col="deepskyblue" ,las=3,ylab=ylabel)
       
-      mtext(paste(variety,"_",namC),outer=T,font=2)
+      boxplot <- ggplot()+ geom_boxplot(width =0.3 ,aes(y=y,
+                 x=x),data = dp ,fill=colbox)+tme+xlab(namC)+
+                 ylab(ylabel)+
+                 theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      
+      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
+       grid.arrange(dotplot,boxplot,ncol=2,top=textGrob(paste(variety,"_",namC),             
+                    gp=gpar(cex=1.1,fontface="bold")))
       dev.off()
       
       cat("\n", namC, "\n",file=paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T )
@@ -322,7 +367,7 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,ylabel = "Re
       
   }else{ write.table(summ,paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=F,sep=",",row.names=F)}
 
-
+  cat("The exploratory analysis is available in:",paste0("\t\t","VARIETY_ANALYSIS/",variety,"/DESCRIPTIVE_ANALYSIS/"))
 }
 
 
