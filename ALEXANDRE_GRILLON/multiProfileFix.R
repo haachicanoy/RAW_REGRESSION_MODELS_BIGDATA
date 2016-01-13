@@ -1,5 +1,5 @@
 
-multiProfile <- function(data, profiles, variable, xlim0=NULL, xla=variable, yla=names(data)[ncol(data)], title=NULL) {
+multiProfile <- function(data, profiles, variable,xlim0=NULL,xla=variable,yla=names(data)[ncol(data)],title=NULL) {
   var <- data[,variable]
   if(is.factor(var)) {
     p <- as.data.frame(profiles[variable])
