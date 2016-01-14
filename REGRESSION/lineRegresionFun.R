@@ -3,21 +3,37 @@
 
 lineaRegresionFun <- function(variety,dirLocation=paste0(getwd(),"/"),ylabs="Yield (Kg/HA)" )
 {
-  
+  ngw <- nchar(dirLocation)
+  if( substring(dirLocation,ngw-16,ngw)=="VARIETY_ANALYSIS/" ){}else{return(cat("Aun no se encuentra en la carpeta VARIETY_ANALYSIS\nUtilize la funcion setwd para dirigirse a este carpeta"))}
+      
   library(relaimpo)
   require(caret)
   
   dirDataSet <- paste0(dirLocation,variety,"/DATA_SETS/",variety,"_reduced.csv")
+  dirDataSetCom <- paste0(dirLocation,variety,"/DATA_SETS/",variety,"_complet.csv")
+  
   dirSave    <- paste0(dirLocation,variety,"/LINEAR_REGRESSION/")  
   
   dataSets   <- lapply(dirDataSet,function(x){read.csv(x,row.names=1)})
-  
+  dataSets2   <- lapply(dirDataSetCom,function(x){read.csv(x,row.names=1)})
  
   
   for(i in 1:length(variety))
   { 
     
     data <- dataSets[[i]]
+    dataComp <- dataSets2[[i]]
+    
+    if(sum(
+        unlist(
+            lapply(
+                1:ncol(dataComp),function(x){is.factor(dataComp[,x])}
+                )
+            )
+        )>0){return(
+            cat("lineRegresionFun solo funciona cuando no hay variables cualitativas en los datos")
+        )}else{}
+        
     
     formLm <- formula(paste(names(data)[ncol(data)], "~ ."))
     

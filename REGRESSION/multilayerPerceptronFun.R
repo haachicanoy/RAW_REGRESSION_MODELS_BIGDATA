@@ -2,6 +2,9 @@
 
 multilayerPerceptronFun <- function(variety,dirLocation=paste0(getwd(),"/"),nb.it = 100,ylabs="Yield (Kg/HA)",pertuRelevance=T,ncores=20,saveWS=F, uncorrset= TRUE )
 {
+    ngw <- nchar(dirLocation)
+    if( substring(dirLocation,ngw-16,ngw)=="VARIETY_ANALYSIS/" ){}else{return(cat("Aun no se encuentra en la carpeta VARIETY_ANALYSIS\nUtilize la funcion setwd para dirigirse a este carpeta"))}
+    
   library(snowfall)
   require(caret)
   require(nnet)

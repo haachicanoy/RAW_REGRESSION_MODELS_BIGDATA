@@ -200,7 +200,7 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
                         ylabel = "Rendimiento (kg/ha)",smooth=FALSE,
                         smoothInd=NULL,ghrp="box",res=NA,sztxt=15,szlbls = 15,
                         colbox="skyblue",colpts="greenyellow",colsmot="red",
-                        szpts=5)
+                        szpts=4,szdts=1.5)
 {
   namsDataSet <- names(dataSet)  
   
@@ -344,7 +344,7 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
       dp <- data.frame(x=cualVar[,namC],y=outputVar)
       dotplot <- ggplot() + geom_dotplot(aes(x=x,y=y),data=dp,
                   binaxis = "y",stackdir = "center",colour="grey4",
-                  fill=colpts,dotsize = 1.5,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
+                  fill=colpts,dotsize = szdts,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
                   theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
       
@@ -495,12 +495,20 @@ vSurFun <- function(variety,dirLocation=paste0(getwd(),"/"),nCor=1)
     cols <- array("royalblue1",ncol(inpVarMat))
     cols[namVar %in% names(inpVarMat)[vSurfResoults$varselect.interp ]] <- "red"
   
-    tiff(paste0(dirSave[i],variety[i],"_relevance_vsurf.tiff"), width = 800, height = 600)
-    k <-  ggplot(metriData,aes(namVar, relvar))+geom_bar( stat="identity",fill=cols,width=0.6,
-                                                          color="black")+theme(axis.text.x = element_text(angle = 45, hjust = 1))+theme(axis.title.y=element_text(
-                                                            size=15),axis.text= element_text(colour = "gray26",size = 13))+xlab("")+ylab("% Sensitivity (Relevance)")+theme(panel.background =
-                                                                                                                                                                            element_rect(colour = "gray38")) +theme(panel.background = element_rect(colour = "gray32"))
-    kf <- k + theme(panel.background = element_rect(fill = 0,colour = "gray"))+geom_line(aes(x = threes, y = relvar),linetype=2) + geom_hline(h=0)
+    tiff(paste0(dirSave[i],variety[i],"_relevance_vsurf.tiff"),
+         width = 800, height = 600)
+    
+    k <-  ggplot(metriData,aes(namVar, relvar))+
+          geom_bar( stat="identity",fill=cols,width=0.6,color="black")+
+          theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+          theme(axis.title.y=element_text(size=15),
+                axis.text= element_text(colour = "gray26",size = 13))+xlab("")+
+          ylab("% Sensitivity (Relevance)")+
+          theme(panel.background = element_rect(colour = "gray38")) +
+          theme(panel.background = element_rect(colour = "gray32"))
+    
+    kf <- k + theme(panel.background = element_rect(fill = 0,colour = "gray"))+
+          geom_line(aes(x = threes, y = relvar),linetype=2) + geom_hline(h=0)
   
     kf <- kf + ggtitle(paste("Vsurf - Variety ", variety[i]))
   

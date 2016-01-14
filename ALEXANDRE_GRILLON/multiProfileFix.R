@@ -25,7 +25,7 @@ multiProfile <- function(data, profiles, variable,xlim0=NULL,xla=variable,yla=na
          ylab=yla, pch=19,         
          ylim=c(min(p), max(p)), col=0, xlim=xlim0,main=title)
     rug(var,ticksize = 0.06,  lwd = 0.8)
-    sapply(p, function(x) lines(y=x, x=row.names(p), lwd=0.5, col='gray'))
+    sapply(p, function(x) lines(y=x, x=row.names(p), lwd=0.5, col=0))
     lines(x=row.names(p), y=rowMeans(p), type="l", col="green", lwd=4)
   }
 }

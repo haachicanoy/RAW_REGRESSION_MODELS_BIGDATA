@@ -1,9 +1,15 @@
 ## All subsequent models are then run in parallel
 
-randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,barplot=FALSE,col.grap="lightskyblue",nb.it = 100,wid=500,hei=800,ab=7,iz=4.1,ar=4.1,de=2.1,ncores=21)
+randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
+                            barplot=FALSE,col.grap="lightskyblue",nb.it = 100,
+                            wid=500,hei=800,ab=7,iz=4.1,ar=4.1,de=2.1,ncores=21,
+                            sztxty=15,sztxtx=15,szlbty=15,szlbtx=15,szmain=15,
+                            pp.szmain=15,pp.sztxtx=15,pp.sztxty=18,pp.szlbty=18,
+                            pp.szlbtx=15,pp.lgndtx=15)
 {
-
-  
+    ngw <- nchar(dirLocation)
+    if( substring(dirLocation,ngw-16,ngw)=="VARIETY_ANALYSIS/" ){}else{return(cat("Aun no se encuentra en la carpeta VARIETY_ANALYSIS\nUtilize la funcion setwd para dirigirse a este carpeta"))}
+    
   sfInit(parallel=T,cpus=ncores)
   sfLibrary(caret)
   sfLibrary(party)
@@ -162,14 +168,22 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,bar
         errBars <- transform(stadistc, lower=Mean-se,upper=Mean+se )
         
         
-        png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei, pointsize = 20)
+        png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei,
+            pointsize = 20,res=80)
+        
         m <- ggplot(mean, aes(x=Variable, y=Mean))
-        m <- m + geom_bar(stat="identity", width=0.5, fill="slategray1") + ylab("Mean importance")+
-            geom_errorbar(aes(ymax = lower, ymin=upper), width=0.25,data=errBars) + coord_flip() +
-            theme_bw() +
-            ggtitle(paste("Importance of variables (with a mean R2 of", perf1, "%)")) +
-            theme(plot.title = element_text(size = 10, face = "bold", colour = "black", vjust = 1.5))
-        suppressWarnings(print(m))
+        m <- m + geom_bar(stat="identity", width=0.5, fill="slategray1") +
+             ylab("Mean importance")+ geom_errorbar(aes(ymax = lower, 
+             ymin=upper), width=0.25,data=errBars) + coord_flip() + theme_bw() +
+             ggtitle(paste("Importance of variables \n(with a mean R2 of",
+             perf1, "%)")) +theme(plot.title = element_text(size = szmain, 
+             face = "bold", colour = "black", vjust = 1.5),
+             axis.text.y =element_text(size = sztxty),
+             axis.text.x =element_text(size = sztxtx),
+             axis.title.x = element_text(size = szlbty),
+             axis.title.y = element_text(size = szlbtx))
+         suppressWarnings(print(m))
+        
         dev.off()
     }else{
         require(cowplot)
@@ -198,12 +212,15 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,bar
         
         png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei, pointsize = 20)
         m <- ggplot(newV1, aes(x=variable, y=value))
-        
-        m <- m + geom_boxplot(fill=col.grap) + ylab("Importance")+ xlab("Input variable")+
-            theme_bw() +
-            ggtitle(paste("Importance of variables (with a mean R2 of", perf1, "%)")) +
-            theme(axis.text.x = element_text(angle=0, hjust=0.5, vjust=0),plot.title = element_text(vjust=3,size=10))+ 
-            coord_flip()+ geom_text(aes(y = max,label = noParameOut.groups.M))
+        m <- m + geom_boxplot(fill=col.grap) + ylab("Importance")+
+            xlab("Input variable")+theme_bw() + 
+            ggtitle(paste("Importance of variables\n(with a mean R2 of", perf1,
+            "%)")) + theme(axis.text.x = element_text(angle=0, hjust=0.5, 
+            vjust=0,size=sztxtx),plot.title = element_text(vjust=3,size=szmain),
+            axis.text.y =element_text(size = sztxty),
+            axis.title.x = element_text(size = szlbty),
+            axis.title.y = element_text(size = szlbtx))+ coord_flip()+
+            geom_text(aes(y = max,label = noParameOut.groups.M))
         
         print(ggdraw(switch_axis_position(m, 'x')))
         dev.off()
@@ -219,15 +236,20 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,bar
     
     limProf <- if(length(profRealData) < 5){ length(profRealData)}else{5}
     
+    
     for(i in 1:limProf)
     {
-      if(!is.null(unlist(profiles[namSort[i]])))
-      {  
-        png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width = hei , hei = wid, pointsize = 20)
-        multiProfile(data,profiles,namSort[i])
-        dev.off()
-      } else{print(paste("Few profiles references for:",namSort[i]))}
+        if(!is.null(unlist(profiles[namSort[i]])))
+        { 
+            png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width =,650, hei =410 , pointsize = 40)
+            multiProfile(data,profiles,namSort[i],pp.szmain=pp.szmain,
+                         pp.sztxtx=pp.sztxtx,pp.sztxty=pp.sztxty,
+                         pp.szlbty=pp.szlbty,pp.szlbtx=pp.szlbtx,
+                         pp.lgndtx=pp.lgndtx)
+            dev.off()
+        } else{print(paste("Few profiles references for:",namSort[i]))}
     }
+    
     if(saveWS==T){save(list = ls(all = TRUE), file = paste0(dirSave[j],"workSpace.RData"))}else{}
   
 

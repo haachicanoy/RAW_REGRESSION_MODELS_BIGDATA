@@ -1,7 +1,15 @@
 ## All subsequent models are then run in parallel
 
-boostingFun <- function(variety,dirLocation=paste0(getwd(),"/"),barplot=FALSE,col.grap="lightskyblue",nb.it = 100,saveWS=F,wid=500,hei=800,ab=7,iz=4.1,ar=4.1,de=2.1,ncores=21)
+boostingFun <- function(variety,dirLocation=paste0(getwd(),"/"),barplot=FALSE,
+                        col.grap="lightskyblue",nb.it = 100,saveWS=F,wid=500,
+                        hei=800,ab=7,iz=4.1,ar=4.1,de=2.1,ncores=21,sztxty=15,
+                        sztxtx=15,szlbty=15,szlbtx=15,szmain=15,pp.szmain=15,
+                        pp.sztxtx=15,pp.sztxty=15,pp.szlbty=18,pp.szlbtx=18,
+                        pp.lgndtx=15)
 {
+  ngw <- nchar(dirLocation)
+  if( substring(dirLocation,ngw-16,ngw)=="VARIETY_ANALYSIS/" ){}else{return(cat("Aun no se encuentra en la carpeta VARIETY_ANALYSIS\nUtilize la funcion setwd para dirigirse a este carpeta"))}
+    
   Sys.time()->start
   require(party)
   require(caret)
@@ -182,7 +190,12 @@ boostingFun <- function(variety,dirLocation=paste0(getwd(),"/"),barplot=FALSE,co
             geom_errorbar(aes(ymax = lower, ymin=upper), width=0.25,data=errBars) + coord_flip() +
             theme_bw() +
             ggtitle(paste("Importance of variables (with a mean R2 of", perf1, "%)")) +
-            theme(plot.title = element_text(size = 10, face = "bold", colour = "black", vjust = 1.5))
+            theme(plot.title = element_text(size = szmain, 
+                                            face = "bold", colour = "black", vjust = 1.5),
+                  axis.text.y =element_text(size = sztxty),
+                  axis.text.x =element_text(size = sztxtx),
+                  axis.title.x = element_text(size = szlbty),
+                  axis.title.y = element_text(size = szlbtx))
         suppressWarnings(print(m))
         dev.off()
     }else{
@@ -215,8 +228,12 @@ boostingFun <- function(variety,dirLocation=paste0(getwd(),"/"),barplot=FALSE,co
         m <- m + geom_boxplot(fill=col.grap) + ylab("Importance")+ xlab("Input variable")+
             theme_bw() +
             ggtitle(paste("Importance of variables (with a mean R2 of", perf1, "%)")) +
-            theme(axis.text.x = element_text(angle=0, hjust=0.5, vjust=0),plot.title = element_text(vjust=3,size=10))+ 
-            coord_flip()+ geom_text(aes(y = max,label = noParameOut.groups.M))
+            theme(axis.text.x = element_text(angle=0, hjust=0.5, 
+            vjust=0,size=sztxtx),plot.title = element_text(vjust=3,size=szmain),
+                  axis.text.y =element_text(size = sztxty),
+                  axis.title.x = element_text(size = szlbty),
+                  axis.title.y = element_text(size = szlbtx))+ coord_flip()+
+            geom_text(aes(y = max,label = noParameOut.groups.M))
     
         print(ggdraw(switch_axis_position(m, 'x')))
         dev.off()
@@ -236,8 +253,11 @@ boostingFun <- function(variety,dirLocation=paste0(getwd(),"/"),barplot=FALSE,co
     {
       if(!is.null(unlist(profiles[namSort[i]])))
       { 
-      png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width =800, hei =500 , pointsize = 20)
-      multiProfile(data,profiles,namSort[i])
+      png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width =,650, hei =410 , pointsize = 40)
+      multiProfile(data,profiles,namSort[i],pp.szmain=pp.szmain,
+                   pp.sztxtx=pp.sztxtx,pp.sztxty=pp.sztxty,
+                   pp.szlbty=pp.szlbty,pp.szlbtx=pp.szlbtx,
+                   pp.lgndtx=pp.lgndtx)
       dev.off()
       } else{print(paste("Few profiles references for:",namSort[i]))}
     }
