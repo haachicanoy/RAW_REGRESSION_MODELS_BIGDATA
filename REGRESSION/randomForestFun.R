@@ -168,8 +168,8 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
         errBars <- transform(stadistc, lower=Mean-se,upper=Mean+se )
         
         
-        png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei,
-            pointsize = 20,res=80)
+        #png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei,
+        #    pointsize = 20,res=80)
         
         m <- ggplot(mean, aes(x=Variable, y=Mean))
         m <- m + geom_bar(stat="identity", width=0.5, fill="slategray1") +
@@ -182,9 +182,12 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
              axis.text.x =element_text(size = sztxtx),
              axis.title.x = element_text(size = szlbty),
              axis.title.y = element_text(size = szlbtx))
-         suppressWarnings(print(m))
+         #suppressWarnings(print(m))
         
-        dev.off()
+        #dev.off()
+        wid = 6.67; hei = 10.67
+        ggsave(filename=paste0(dirSave[j],"InputRelvance.pdf"), plot=m, width=wid, height=hei, units='in')
+        
     }else{
         require(cowplot)
         #Comienzo boxplot
@@ -241,7 +244,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
     {
         if(!is.null(unlist(profiles[namSort[i]])))
         { 
-            png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"),width =,650, hei =410 , pointsize = 40)
+            png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"), width=650, height=410 , pointsize=40)
             multiProfile(data,profiles,namSort[i],pp.szmain=pp.szmain,
                          pp.sztxtx=pp.sztxtx,pp.sztxty=pp.sztxty,
                          pp.szlbty=pp.szlbty,pp.szlbtx=pp.szlbtx,
