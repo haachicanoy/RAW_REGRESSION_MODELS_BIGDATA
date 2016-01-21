@@ -7,6 +7,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
                             pp.szmain=15,pp.sztxtx=15,pp.sztxty=18,pp.szlbty=18,
                             pp.szlbtx=15,pp.lgndtx=15)
 {
+  options(warn=-1)
     ngw <- nchar(dirLocation)
     if( substring(dirLocation,ngw-16,ngw)=="VARIETY_ANALYSIS/" ){}else{return(cat("Aun no se encuentra en la carpeta VARIETY_ANALYSIS\nUtilize la funcion setwd para dirigirse a este carpeta"))}
     
@@ -249,12 +250,14 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
     {
         if(!is.null(unlist(profiles[namSort[i]])))
         { 
-            png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"), width=650, height=410 , pointsize=40)
-            multiProfile(data,profiles,namSort[i],pp.szmain=pp.szmain,
-                         pp.sztxtx=pp.sztxtx,pp.sztxty=pp.sztxty,
-                         pp.szlbty=pp.szlbty,pp.szlbtx=pp.szlbtx,
-                         pp.lgndtx=pp.lgndtx)
-            dev.off()
+            #png(paste0(dirSave[j],"MultiProfile_",namSort[i],".png"), width=650, height=410 , pointsize=40)
+            m <- multiProfile(data,profiles,namSort[i],pp.szmain=pp.szmain,
+                              pp.sztxtx=pp.sztxtx,pp.sztxty=pp.sztxty,
+                              pp.szlbty=pp.szlbty,pp.szlbtx=pp.szlbtx,
+                              pp.lgndtx=pp.lgndtx)
+            #dev.off()
+            ggsave(filename=paste0(dirSave[j],"MultiProfile_",namSort[i],".pdf"), plot=m, width=8.67, height=5.47, units='in')
+            system(paste("convert -verbose -density 300 ", dirSave[j], "MultiProfile_", namSort[i], ".pdf -quality 100 -sharpen 0x1.0 -alpha off ", dirSave[j], "MultiProfile_", namSort[i], ".png", sep=""), wait=TRUE)
         } else{print(paste("Few profiles references for:",namSort[i]))}
     }
     
