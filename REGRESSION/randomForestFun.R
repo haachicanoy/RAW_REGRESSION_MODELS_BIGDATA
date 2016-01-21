@@ -187,6 +187,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
         #dev.off()
         wid = 6.67; hei = 10.67
         ggsave(filename=paste0(dirSave[j],"InputRelvance.pdf"), plot=m, width=wid, height=hei, units='in')
+        system(paste("convert -verbose -density 300 ", dirSave[j], "InputRelvance.pdf -quality 100 -sharpen 0x1.0 -alpha off ", dirSave[j], "InputRelvance.png", sep=""), wait=TRUE)
         
     }else{
         require(cowplot)
