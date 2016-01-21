@@ -214,7 +214,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
         newV1 <- merge(newV,groupsData,by.x="variable",by.y="noParameOut.groups.trt",all.x=T,all.y=F,sort = F)
         
         
-        png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei, pointsize = 20)
+        # png(paste0(dirSave[j],"InputRelvance.png"),width = wid, hei = hei, pointsize = 20)
         m <- ggplot(newV1, aes(x=variable, y=value))
         m <- m + geom_boxplot(fill=col.grap) + ylab("Importance")+
             xlab("Input variable")+theme_bw() + 
@@ -226,8 +226,12 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
             axis.title.y = element_text(size = szlbtx))+ coord_flip()+
             geom_text(aes(y = max,label = noParameOut.groups.M))
         
-        print(ggdraw(switch_axis_position(m, 'x')))
-        dev.off()
+        wid = 6.67; hei = 10.67
+        ggsave(filename=paste0(dirSave[j],"InputRelvance.pdf"), plot=m, width=wid, height=hei, units='in')
+        system(paste("convert -verbose -density 300 ", dirSave[j], "InputRelvance.pdf -quality 100 -sharpen 0x1.0 -alpha off ", dirSave[j], "InputRelvance.png", sep=""), wait=TRUE)
+        
+        # print(ggdraw(switch_axis_position(m, 'x')))
+        # dev.off()
     }
     #Fin del grafico boxplot
     
