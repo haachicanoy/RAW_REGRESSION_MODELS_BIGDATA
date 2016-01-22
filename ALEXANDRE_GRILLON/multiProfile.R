@@ -25,7 +25,8 @@ multiProfile <- function(data, profiles, variable,xlim0=NULL,pp.szmain=15,pp.szt
             axis.title.y = element_text(size = pp.szlbtx),
             legend.text=element_text(size=pp.lgndtx))
     
-    suppressWarnings(print(m))
+    # suppressWarnings(print(m))
+    return(m)
     
   } else {
     p <- as.data.frame(profiles[variable])
@@ -46,6 +47,8 @@ multiProfile <- function(data, profiles, variable,xlim0=NULL,pp.szmain=15,pp.szt
         
     
       #sapply(p, function(x) lines(y=x, x=row.names(p), lwd=0.5, col=rgb(0,0,0,0.2)))
-  print(partialDep)
+  # print(partialDep)
+    return(partialDep)
+  
   }
 }
