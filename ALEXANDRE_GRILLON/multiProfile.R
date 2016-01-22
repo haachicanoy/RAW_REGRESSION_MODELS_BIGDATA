@@ -1,6 +1,6 @@
 
 multiProfile <- function(data, profiles, variable,xlim0=NULL,pp.szmain=15,pp.sztxtx=15,
-                pp.sztxty=15,pp.szlbty=20,pp.szlbtx=20,pp.lgndtx=15) {
+                         pp.sztxty=15,pp.szlbty=20,pp.szlbtx=20,pp.lgndtx=15) {
   var <- data[,variable]
   if(is.factor(var)) {
     p <- as.data.frame(profiles[variable])
@@ -35,20 +35,19 @@ multiProfile <- function(data, profiles, variable,xlim0=NULL,pp.szmain=15,pp.szt
     datf  <- data.frame(x=as.numeric(row.names(p)), y=as.numeric(rowMeans(p)))
     
     partialDep <-  ggplot(datf0,aes(x=x,y=y))+geom_line(col="green",lwd=1.5,aes(x=x,y=y),data=datf)+
-        ylim(c(min(p), max(p)))+theme_bw()+ggtitle(paste("Individual influence of",
-                                         variable, "(with", ncol(p), "profiles)"))+
-         geom_rug(sides="b")+
-            theme(plot.title = element_text(vjust=3,size=pp.szmain),
-                axis.text.x = element_text(size = pp.sztxtx),
-                axis.text.y = element_text(angle = 90,hjust = 0.5,size = pp.sztxty),
-                axis.title.x = element_text(size = pp.szlbty),
-                axis.title.y = element_text(size = pp.szlbtx))+
-                ylab(names(data)[ncol(data)])+xlab(variable)
-        
+      ylim(c(min(p), max(p)))+theme_bw()+ggtitle(paste("Individual influence of",
+                                                       variable, "(with", ncol(p), "profiles)"))+
+      geom_rug(sides="b")+
+      theme(plot.title = element_text(vjust=3,size=pp.szmain),
+            axis.text.x = element_text(size = pp.sztxtx),
+            axis.text.y = element_text(angle = 90,hjust = 0.5,size = pp.sztxty),
+            axis.title.x = element_text(size = pp.szlbty),
+            axis.title.y = element_text(size = pp.szlbtx))+
+      ylab(names(data)[ncol(data)])+xlab(variable)
     
-      #sapply(p, function(x) lines(y=x, x=row.names(p), lwd=0.5, col=rgb(0,0,0,0.2)))
-  # print(partialDep)
+    #sapply(p, function(x) lines(y=x, x=row.names(p), lwd=0.5, col=rgb(0,0,0,0.2)))
+    # print(partialDep)
     return(partialDep)
-  
+    
   }
 }
