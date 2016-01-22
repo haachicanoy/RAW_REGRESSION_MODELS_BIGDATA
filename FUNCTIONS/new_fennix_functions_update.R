@@ -1,12 +1,12 @@
 #--------------------------------------------------------------
 #--------------------------FENNIX FUNCTION---------------------
 
-completeSummary <-function(table)
+completeSummary <- function(table)
 {
   
   ncTable <- ncol(table)
   
-  factCol <- unlist(lapply(1:ncTable,function(x){is.factor(table[,x])}))
+  factCol <- unlist(lapply(1:ncTable, function(x){is.factor(table[,x])}))
   
   if(sum(factCol)>0)
   {
@@ -17,40 +17,38 @@ completeSummary <-function(table)
     
     cualVar  <- as.data.frame(table[,factCol])
     
-    if(ncol(cualVar)==1){names(cualVar) <- names(table)[factCol];summCual <- list(table(cualVar));names(summCual) <- names(table)[factCol]}
+    if(ncol(cualVar)==1){names(cualVar) <- names(table)[factCol]; summCual <- list(table(cualVar)); names(summCual) <- names(table)[factCol]}
     else{summCual <- apply(cualVar,2,table)}
     
-    
   }else{cuantVar  <- table}  
-
-  min <- apply(cuantVar,2,min)
-  Q1  <- apply(cuantVar,2,function(x){quantile(x,0.25)})
-  mad <- apply(cuantVar,2,median)
-  med <- apply(cuantVar,2,mean)
-  Q3  <- apply(cuantVar,2,function(x){quantile(x,0.75)})
-  max <- apply(cuantVar,2,max)
-  sd  <- apply(cuantVar,2,sd)
-  cv <-  apply(cuantVar,2,function(x){if(mean(x)!=0){sd(x)/mean(x)*100}else{cv=NA}})
+  
+  min <- apply(cuantVar,2, min)
+  Q1  <- apply(cuantVar,2, function(x){quantile(x,0.25)})
+  mad <- apply(cuantVar,2, median)
+  med <- apply(cuantVar,2, mean)
+  Q3  <- apply(cuantVar,2, function(x){quantile(x,0.75)})
+  max <- apply(cuantVar,2, max)
+  sd  <- apply(cuantVar,2, sd)
+  cv <-  apply(cuantVar,2, function(x){if(mean(x)!=0){sd(x)/mean(x)*100}else{cv=NA}})
   #if(mean(x!=0))
   #{  
-   # cv  <- apply(table,2,function(x){sd(x)/mean(x)*100})
+  # cv  <- apply(table,2,function(x){sd(x)/mean(x)*100})
   #}else{cv=NA}
   
-  summCuant <- as.data.frame(round(as.matrix( data.frame(max,min,Q1,Q3,mad,med,sd,cv)),3) )
+  summCuant <- as.data.frame(round(as.matrix( data.frame(max, min, Q1, Q3, mad, med, sd, cv)),3) )
   
   var <- row.names(summCuant)
   
-  summCuant <- data.frame(var,summCuant)
+  summCuant <- data.frame(var, summCuant)
   
-  if(sum(factCol)>0){summaryDataSet <- list(summCuant,summCual)}else{summaryDataSet <- summCuant}
-  
- 
+  if(sum(factCol)>0){summaryDataSet <- list(summCuant, summCual)}else{summaryDataSet <- summCuant}
   
   return(summaryDataSet)
+  
 }
- 
 
-corScheme <- function(compMatrix,unCorMatrix,dirSave)
+
+corScheme <- function(compMatrix, unCorMatrix, dirSave)
 {
   namUnMatrix <- names(unCorMatrix)
   namMatrix   <- names(compMatrix)
@@ -64,7 +62,7 @@ corScheme <- function(compMatrix,unCorMatrix,dirSave)
   for(i in 1:(ncol(unCorMatrix)-1))
   {  
     target <- unCorMatrix[namUnMatrix[i]][,1]
-    inputs <- compMatrix[-which(namUnMatrix[i] == namMatrix)]
+    inputs <- compMatrix[-which(namUnMatrix[i]==namMatrix)]
     
     
     corOth <- cor(x=inputs,y=target)[,1]
@@ -72,7 +70,7 @@ corScheme <- function(compMatrix,unCorMatrix,dirSave)
     
     corColum <- factor("")
     
-    if(sum(corOth >0.69)>0 & sum(corOth < -0.69)>0)
+    if(sum(corOth>0.69)>0 & sum(corOth < -0.69)>0)
     {
       nvN <- namVar[corOth < -0.69]
       nvP <- namVar[corOth >0.69]
@@ -111,15 +109,15 @@ unCorrMatrix <- function(data,dirSav,cor.reduce="caret")
       i=1
       while(ncol(data)>i)
       { 
-      
+        
         print(paste("Step",i))
         outPut    <- data[,ncol(data)]
         colCor    <- corMat[,i]
-      
+        
         #ABRE
         nam <- names(data)
         #CIERRA      
-      
+        
         if(sum(colCor>=0.69 & colCor<1)==0)
         {   
           data <- data
@@ -131,7 +129,7 @@ unCorrMatrix <- function(data,dirSav,cor.reduce="caret")
           #CIERRA
           corOutput <- as.vector(abs(cor(data[,corCol],outPut)))
           corMax    <- corCol[which(corOutput==max(corOutput))[1]]
-        
+          
           if(i == corMax)
           {
             quitCol <-  corCol[-1]
@@ -139,11 +137,11 @@ unCorrMatrix <- function(data,dirSav,cor.reduce="caret")
             quitCol <-  corCol[1]
           }
           #quitCol   <- corCol[which(corOutput!=max(corOutput))] #HE QUITADO [1]
-        
+          
           data      <- data[,-quitCol]
           #ABRE
           print("variables removed:")
-        
+          
           print(nam[quitCol])
           print("---------------*--------------")
           #CIERRA      
@@ -197,10 +195,10 @@ createFolders <- function(dirFol,variety)
 
 
 descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
-                        ylabel = "Rendimiento (kg/ha)",smooth=FALSE,
-                        smoothInd=NULL,ghrp="box",res=NA,sztxt=15,szlbls = 15,
-                        colbox="skyblue",colpts="greenyellow",colsmot="red",
-                        szpts=4,szdts=1.5)
+                                ylabel = "Rendimiento (kg/ha)",smooth=FALSE,
+                                smoothInd=NULL,ghrp="box",res=NA,sztxt=15,szlbls = 15,
+                                colbox="skyblue",colpts="greenyellow",colsmot="red",
+                                szpts=4,szdts=1.5)
 {
   namsDataSet <- names(dataSet)  
   
@@ -212,7 +210,7 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
   ncTable <- ncol(dataSetV)
   
   outputVar <- dataSetV[,(output-1)]
-
+  
   
   factCol0 <- unlist(lapply(1:ncTable,function(x){is.factor(dataSetV[,x])}))
   
@@ -227,7 +225,7 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
     cualVar  <- as.data.frame(dataSetV[,factCol])
     
     if(ncol(cualVar)==1){names(cualVar) <- names(dataSetV)[factCol]}
-
+    
     
   }else{cuantVar  <- dataSetV} 
   
@@ -235,127 +233,127 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
   namCuanInputs <- names(cuantVar)[-nInputs]
   
   tme <- theme_bw() +theme(legend.position="none")+
-      theme(axis.title.x = element_text(size = szlbls),
-            axis.title.y = element_text(size = szlbls),
-            axis.text.x =  element_text(size = sztxt),
-            axis.text.y =  element_text(size = sztxt,angle = 90, hjust = 0.5))
+    theme(axis.title.x = element_text(size = szlbls),
+          axis.title.y = element_text(size = szlbls),
+          axis.text.x =  element_text(size = sztxt),
+          axis.text.y =  element_text(size = sztxt,angle = 90, hjust = 0.5))
+  
+  for(namC in namCuanInputs)
+  {  
+    
+    plotData <- data.frame(x=cuantVar[,namC],y=outputVar)
+    
+    plo <- ggplot()+ geom_point(aes(x=x,y=y),data=plotData,colour="grey4",
+                                fill=colpts,size=szpts,shape = 21,alpha =0.6)+
+      ylab(ylabel) + xlab(namC) +tme
+    
+    
+    box <- qplot(y=x,x=namC,alpha = I(0.00001),data=plotData)+geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(namC)+tme
+    
+    if(!isTRUE(smooth))
+    {
       
-    for(namC in namCuanInputs)
-    {  
-    
-       plotData <- data.frame(x=cuantVar[,namC],y=outputVar)
-       
-       plo <- ggplot()+ geom_point(aes(x=x,y=y),data=plotData,colour="grey4",
-                       fill=colpts,size=szpts,shape = 21,alpha =0.6)+
-           ylab(ylabel) + xlab(namC) +tme
-       
-        
-       box <- qplot(y=x,x=namC,alpha = I(0.00001),data=plotData)+geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(namC)+tme
-       
-      if(!isTRUE(smooth))
-      {
-          
-        png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
-        grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
-                     " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
-        dev.off()
-      }else{
-
-          png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
-
-        lo <- suppressWarnings(loess(outputVar~cuantVar[,namC]))
-        xl <- seq(min(cuantVar[,namC]),max(cuantVar[,namC]), (max(cuantVar[,namC]) - min(cuantVar[,namC]))/1000)
-        predicLoess <- try(predict(lo,xl), silent = T)
-                    
-        
-            if(is(predicLoess)[1]!="try-error")
-                {  loesMat <- data.frame(xl,predicLoess)
-                    plo <- plo + geom_line(aes(x=xl,y=predicLoess),lwd=1.3,
-                                           col=colsmot,data=loesMat) 
-
-                }else{
-                    lows <- lowess(outputVar~cuantVar[,namC])
-                    lowsMat <- data.frame(x=lows$x,y=lows$y)
-                    plo <- plo + geom_line(aes(x=x,y=y),lwd=1.3,col=colsmot,
-                                           data=lowsMat)
-            }
-              
-      }
-      if(ghrp=="box")
-      {
-          grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
-                   " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
-    
-        }else if(ghrp=="varPoints"){
-            
-            datf  <- data.frame(x=dataSet[,namC],y=dataSet[,output])
-            datf1 <- data.frame(x=cuantVar[,namC],y=outputVar)
-
-            plo1 <- ggplot() + geom_point(aes(x=x,y=y),colour="grey4",
-                                          fill="grey",data=datf,size=szpts,
-                                          shape = 21,alpha =0.6)
-            plo1 <- plo1 + geom_point(aes(x=x,y=y),data=datf1,
-                                      colour="grey4",fill="red",
-                                      size=szpts,shape = 21,alpha =0.6)
-            plo1 <- plo1 + theme_bw()+ ylab(ylabel) + xlab(namC) +tme
-            
-            grid.arrange(plo1,box,ncol = 2,top = textGrob(paste0(variety,
-            " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))  
-
-            
-      }else{stop("ghrp Invlid")}
-
+      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
+      grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
+                                                          " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
       dev.off()
+    }else{
+      
+      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
+      
+      lo <- suppressWarnings(loess(outputVar~cuantVar[,namC]))
+      xl <- seq(min(cuantVar[,namC]),max(cuantVar[,namC]), (max(cuantVar[,namC]) - min(cuantVar[,namC]))/1000)
+      predicLoess <- try(predict(lo,xl), silent = T)
+      
+      
+      if(is(predicLoess)[1]!="try-error")
+      {  loesMat <- data.frame(xl,predicLoess)
+      plo <- plo + geom_line(aes(x=xl,y=predicLoess),lwd=1.3,
+                             col=colsmot,data=loesMat) 
+      
+      }else{
+        lows <- lowess(outputVar~cuantVar[,namC])
+        lowsMat <- data.frame(x=lows$x,y=lows$y)
+        plo <- plo + geom_line(aes(x=x,y=y),lwd=1.3,col=colsmot,
+                               data=lowsMat)
+      }
+      
     }
- 
+    if(ghrp=="box")
+    {
+      grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
+                                                          " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
+      
+    }else if(ghrp=="varPoints"){
+      
+      datf  <- data.frame(x=dataSet[,namC],y=dataSet[,output])
+      datf1 <- data.frame(x=cuantVar[,namC],y=outputVar)
+      
+      plo1 <- ggplot() + geom_point(aes(x=x,y=y),colour="grey4",
+                                    fill="grey",data=datf,size=szpts,
+                                    shape = 21,alpha =0.6)
+      plo1 <- plo1 + geom_point(aes(x=x,y=y),data=datf1,
+                                colour="grey4",fill="red",
+                                size=szpts,shape = 21,alpha =0.6)
+      plo1 <- plo1 + theme_bw()+ ylab(ylabel) + xlab(namC) +tme
+      
+      grid.arrange(plo1,box,ncol = 2,top = textGrob(paste0(variety,
+                                                           " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))  
+      
+      
+    }else{stop("ghrp Invlid")}
+    
+    dev.off()
+  }
+  
   png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_Yield.png"),width=775,
       height=280,res=res)
   otpvar <- data.frame(x=outputVar)
   
   ydplot <- ggplot()+geom_histogram(aes(x=x),data=otpvar,
-                          breaks=seq(min(outputVar), max(outputVar),
-                                     length.out=nclass.Sturges(outputVar)),
-                          colour = "gray1",fill=colbox
-                          )+tme+xlab(ylabel)+ylab("Frecuencia")
+                                    breaks=seq(min(outputVar), max(outputVar),
+                                               length.out=nclass.Sturges(outputVar)),
+                                    colour = "gray1",fill=colbox
+  )+tme+xlab(ylabel)+ylab("Frecuencia")
   
   boxdf <- data.frame(x=ylabel,y=outputVar)
   box <- qplot(y=y,x=x,alpha = I(0.00001),data=boxdf)+
-      geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(ylabel)+tme
+    geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(ylabel)+tme
   
   
   grid.arrange(ydplot,box,ncol = 2,top = textGrob(paste(variety,"_Yield"),
-                gp=gpar(cex=1.1,fontface = 'bold')))
+                                                  gp=gpar(cex=1.1,fontface = 'bold')))
   
- dev.off()
- 
-
+  dev.off()
+  
+  
   summ <- completeSummary(dataSetV)
- 
+  
   
   if(sum(factCol0)>0)
   { 
     namCualVar <- names(cualVar)
     
     write.table(summ[[1]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,
-                     "summaryVariables.csv"),append=F,sep=",",row.names=F)
+                                 "summaryVariables.csv"),append=F,sep=",",row.names=F)
     
     for(namC in namCualVar)
     {
       dp <- data.frame(x=cualVar[,namC],y=outputVar)
       dotplot <- ggplot() + geom_dotplot(aes(x=x,y=y),data=dp,
-                  binaxis = "y",stackdir = "center",colour="grey4",
-                  fill=colpts,dotsize = szdts,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
-                  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                                         binaxis = "y",stackdir = "center",colour="grey4",
+                                         fill=colpts,dotsize = szdts,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
       
       boxplot <- ggplot()+ geom_boxplot(width =0.3 ,aes(y=y,
-                 x=x),data = dp ,fill=colbox)+tme+xlab(namC)+
-                 ylab(ylabel)+
-                 theme(axis.text.x = element_text(angle = 45, hjust = 1))
+                                                        x=x),data = dp ,fill=colbox)+tme+xlab(namC)+
+        ylab(ylabel)+
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
       
       png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
-       grid.arrange(dotplot,boxplot,ncol=2,top=textGrob(paste(variety,"_",namC),             
-                    gp=gpar(cex=1.1,fontface="bold")))
+      grid.arrange(dotplot,boxplot,ncol=2,top=textGrob(paste(variety,"_",namC),             
+                                                       gp=gpar(cex=1.1,fontface="bold")))
       dev.off()
       
       cat("\n", namC, "\n",file=paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T )
@@ -363,10 +361,10 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
       write.table(summ[[2]][[namC]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T,row.names=F,col.names =F,sep=",")
       
     }
-     
-      
+    
+    
   }else{ write.table(summ,paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=F,sep=",",row.names=F)}
-
+  
   cat("The exploratory analysis is available in:",paste0("\t\t","VARIETY_ANALYSIS/",variety,"/DESCRIPTIVE_ANALYSIS/"))
 }
 
@@ -374,9 +372,9 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
 
 dataSetProces <- function(variety,dataSet,segme,corRed)
 {
- 
-   nInputList <- 0
-
+  
+  nInputList <- 0
+  
   for(i in 1:length(variety))
   { 
     dirSav <- paste0(variety[i],"/DATA_SETS/")
@@ -398,20 +396,20 @@ dataSetProces <- function(variety,dataSet,segme,corRed)
       cat(paste(names(allData)[nvz],collapse = "\n"),file=paste0(dirSav,"RemovedVariables.txt"),append=T)
     }else{allData <- listVari}
     
-#     if(sum(round(apply(listVari,2,sd),2)==0)>0)
-#     {  
-#       allData <- listVari[,-which(round(apply(listVari,2,sd),2)==0)]
-#     }else{allData <- listVari }
+    #     if(sum(round(apply(listVari,2,sd),2)==0)>0)
+    #     {  
+    #       allData <- listVari[,-which(round(apply(listVari,2,sd),2)==0)]
+    #     }else{allData <- listVari }
     
     listVari2 <- listVari
     
     listVari2$ID <- row.names(listVari)
-
+    
     listVari2 <- listVari2[,c(length(listVari2),1:(length(listVari2)-1))]
     
     write.csv(listVari2,paste0(dirSav,variety[i],"_complet.csv"), row.names = F)
     
-
+    
     cualVar <- unlist(lapply(1:ncol(allData),function(x){!is.factor(allData[,x])}))
     
     if(sum(cualVar)!=length(cualVar))
@@ -433,7 +431,7 @@ dataSetProces <- function(variety,dataSet,segme,corRed)
       dummies <- dummyVars(form, data = listVari)
       
       tranfVars <- predict(dummies, newdata = listVari)
-        
+      
       unlistvari <- as.data.frame(unCorrMatrix(tranfVars,dirSav,cor.reduce = corRed))
       
       unlistvari$output <-  allData[,ncol(allData)]
@@ -441,14 +439,14 @@ dataSetProces <- function(variety,dataSet,segme,corRed)
       corScheme(as.data.frame(tranfVars),unlistvari,dirSav)
       
     }else{cuantAllData <- allData ; unlistvari <- as.data.frame(unCorrMatrix(listVari,dirSav,cor.reduce = corRed)) ; corScheme(as.data.frame(cuantAllData ),unlistvari,dirSav)}
-
     
     
-
+    
+    
     corMatrix <- cor(cuantAllData)
     
     write.csv(corMatrix,paste0(dirSav,variety[i],"_corMatrix.csv"))
-
+    
     
     
     #saveFennixFormat(unlistvari,variety[i],paste0(variety[i],"/ARTIFICIAL_NEURAL_NETWORK/"))
@@ -480,44 +478,44 @@ vSurFun <- function(variety,dirLocation=paste0(getwd(),"/"),nCor=1)
     listVari  <- dataSets[[i]]
     inpVarMat <- listVari[,1:(ncol(listVari)-1)]
     outVarMat <- listVari[,ncol(listVari)]    
-  
+    
     vSurfResoults <- VSURF.parallel(x=inpVarMat,y=outVarMat,ncores = nCor,ntree = 2000,mtry=dim(inpVarMat)/3)
-  
+    
     relvar <- round( vSurfResoults$ord.imp$x/sum(vSurfResoults$ord.imp$x),3)*100  
     namVar <- names(inpVarMat)[vSurfResoults$ord.imp$ix]  
-  
+    
     namVar <- factor(namVar,levels=namVar)
     threes <-  length(vSurfResoults$varselect.thres)+0.5
-  
+    
     metriData  <- data.frame(namVar,relvar,threes)     
-  
-  
+    
+    
     cols <- array("royalblue1",ncol(inpVarMat))
     cols[namVar %in% names(inpVarMat)[vSurfResoults$varselect.interp ]] <- "red"
-  
+    
     tiff(paste0(dirSave[i],variety[i],"_relevance_vsurf.tiff"),
          width = 800, height = 600)
     
     k <-  ggplot(metriData,aes(namVar, relvar))+
-          geom_bar( stat="identity",fill=cols,width=0.6,color="black")+
-          theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-          theme(axis.title.y=element_text(size=15),
-                axis.text= element_text(colour = "gray26",size = 13))+xlab("")+
-          ylab("% Sensitivity (Relevance)")+
-          theme(panel.background = element_rect(colour = "gray38")) +
-          theme(panel.background = element_rect(colour = "gray32"))
+      geom_bar( stat="identity",fill=cols,width=0.6,color="black")+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+      theme(axis.title.y=element_text(size=15),
+            axis.text= element_text(colour = "gray26",size = 13))+xlab("")+
+      ylab("% Sensitivity (Relevance)")+
+      theme(panel.background = element_rect(colour = "gray38")) +
+      theme(panel.background = element_rect(colour = "gray32"))
     
     kf <- k + theme(panel.background = element_rect(fill = 0,colour = "gray"))+
-          geom_line(aes(x = threes, y = relvar),linetype=2) + geom_hline(h=0)
-  
+      geom_line(aes(x = threes, y = relvar),linetype=2) + geom_hline(h=0)
+    
     kf <- kf + ggtitle(paste("Vsurf - Variety ", variety[i]))
-  
+    
     print(kf)
-  
+    
     dev.off()
     print(variety[i])
   }  
-    
+  
 }
 
 varImportance <- function(model, pred.data=model$trainingData, ..., scale=T) 
