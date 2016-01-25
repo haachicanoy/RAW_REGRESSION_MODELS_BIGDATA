@@ -1,12 +1,12 @@
 #--------------------------------------------------------------
 #--------------------------FENNIX FUNCTION---------------------
 
-completeSummary <- function(table)
+completeSummary <-function(table)
 {
   
   ncTable <- ncol(table)
   
-  factCol <- unlist(lapply(1:ncTable, function(x){is.factor(table[,x])}))
+  factCol <- unlist(lapply(1:ncTable,function(x){is.factor(table[,x])}))
   
   if(sum(factCol)>0)
   {
@@ -17,38 +17,40 @@ completeSummary <- function(table)
     
     cualVar  <- as.data.frame(table[,factCol])
     
-    if(ncol(cualVar)==1){names(cualVar) <- names(table)[factCol]; summCual <- list(table(cualVar)); names(summCual) <- names(table)[factCol]}
+    if(ncol(cualVar)==1){names(cualVar) <- names(table)[factCol];summCual <- list(table(cualVar));names(summCual) <- names(table)[factCol]}
     else{summCual <- apply(cualVar,2,table)}
+    
     
   }else{cuantVar  <- table}  
   
-  min <- apply(cuantVar,2, min)
-  Q1  <- apply(cuantVar,2, function(x){quantile(x,0.25)})
-  mad <- apply(cuantVar,2, median)
-  med <- apply(cuantVar,2, mean)
-  Q3  <- apply(cuantVar,2, function(x){quantile(x,0.75)})
-  max <- apply(cuantVar,2, max)
-  sd  <- apply(cuantVar,2, sd)
-  cv <-  apply(cuantVar,2, function(x){if(mean(x)!=0){sd(x)/mean(x)*100}else{cv=NA}})
+  min <- apply(cuantVar,2,min)
+  Q1  <- apply(cuantVar,2,function(x){quantile(x,0.25)})
+  mad <- apply(cuantVar,2,median)
+  med <- apply(cuantVar,2,mean)
+  Q3  <- apply(cuantVar,2,function(x){quantile(x,0.75)})
+  max <- apply(cuantVar,2,max)
+  sd  <- apply(cuantVar,2,sd)
+  cv <-  apply(cuantVar,2,function(x){if(mean(x)!=0){sd(x)/mean(x)*100}else{cv=NA}})
   #if(mean(x!=0))
   #{  
   # cv  <- apply(table,2,function(x){sd(x)/mean(x)*100})
   #}else{cv=NA}
   
-  summCuant <- as.data.frame(round(as.matrix( data.frame(max, min, Q1, Q3, mad, med, sd, cv)),3) )
+  summCuant <- as.data.frame(round(as.matrix( data.frame(max,min,Q1,Q3,mad,med,sd,cv)),3) )
   
   var <- row.names(summCuant)
   
-  summCuant <- data.frame(var, summCuant)
+  summCuant <- data.frame(var,summCuant)
   
-  if(sum(factCol)>0){summaryDataSet <- list(summCuant, summCual)}else{summaryDataSet <- summCuant}
+  if(sum(factCol)>0){summaryDataSet <- list(summCuant,summCual)}else{summaryDataSet <- summCuant}
+  
+  
   
   return(summaryDataSet)
-  
 }
 
 
-corScheme <- function(compMatrix, unCorMatrix, dirSave)
+corScheme <- function(compMatrix,unCorMatrix,dirSave)
 {
   namUnMatrix <- names(unCorMatrix)
   namMatrix   <- names(compMatrix)
@@ -62,7 +64,7 @@ corScheme <- function(compMatrix, unCorMatrix, dirSave)
   for(i in 1:(ncol(unCorMatrix)-1))
   {  
     target <- unCorMatrix[namUnMatrix[i]][,1]
-    inputs <- compMatrix[-which(namUnMatrix[i]==namMatrix)]
+    inputs <- compMatrix[-which(namUnMatrix[i] == namMatrix)]
     
     
     corOth <- cor(x=inputs,y=target)[,1]
@@ -70,7 +72,7 @@ corScheme <- function(compMatrix, unCorMatrix, dirSave)
     
     corColum <- factor("")
     
-    if(sum(corOth>0.69)>0 & sum(corOth < -0.69)>0)
+    if(sum(corOth >0.69)>0 & sum(corOth < -0.69)>0)
     {
       nvN <- namVar[corOth < -0.69]
       nvP <- namVar[corOth >0.69]
@@ -194,11 +196,11 @@ createFolders <- function(dirFol,variety)
 
 
 
-descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
-                                ylabel = "Rendimiento (kg/ha)",smooth=FALSE,
-                                smoothInd=NULL,ghrp="box",res=NA,sztxt=15,szlbls = 15,
-                                colbox="skyblue",colpts="greenyellow",colsmot="red",
-                                szpts=4,szdts=1.5)
+descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
+                                ylabel="Rendimiento (kg/ha)", smooth=FALSE,
+                                smoothInd=NULL, ghrp="box", res=NA, sztxt=15, szlbls=15,
+                                colbox="skyblue", colpts="greenyellow", colsmot="red",
+                                szpts=4, szdts=1.5)
 {
   namsDataSet <- names(dataSet)  
   
@@ -241,11 +243,10 @@ descriptiveGraphics <- function(variety,dataSet,inputs,segme,output,
   for(namC in namCuanInputs)
   {  
     
-    plotData <- data.frame(x=cuantVar[,namC],y=outputVar)
+    plotData <- data.frame(x=cuantVar[,namC], y=outputVar)
     
-    plo <- ggplot()+ geom_point(aes(x=x,y=y),data=plotData,colour="grey4",
-                                fill=colpts,size=szpts,shape = 21,alpha =0.6)+
-      ylab(ylabel) + xlab(namC) +tme
+    plo <- ggplot()+ geom_point(aes(x=x, y=y), data=plotData, colour="grey4", fill=colpts, size=szpts, shape=21) + # , alpha=0.2
+      ylab(ylabel) + xlab(namC) + tme
     
     
     box <- qplot(y=x,x=namC,alpha = I(0.00001),data=plotData)+geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(namC)+tme
@@ -580,4 +581,3 @@ varImportance <- function(model, pred.data=model$trainingData, ..., scale=T)
   invisible(errors)
   return(errors)
 }
-
