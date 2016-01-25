@@ -235,10 +235,10 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
   namCuanInputs <- names(cuantVar)[-nInputs]
   
   tme <- theme_bw() +theme(legend.position="none")+
-    theme(axis.title.x = element_text(size = szlbls),
-          axis.title.y = element_text(size = szlbls),
-          axis.text.x =  element_text(size = sztxt),
-          axis.text.y =  element_text(size = sztxt,angle = 90, hjust = 0.5))
+    theme(axis.title.x = element_text(size=szlbls),
+          axis.title.y = element_text(size=szlbls),
+          axis.text.x  = element_text(size=sztxt),
+          axis.text.y  = element_text(size=sztxt, angle=90, hjust=0.5))
   
   for(namC in namCuanInputs)
   {  
@@ -249,57 +249,49 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       ylab(ylabel) + xlab(namC) + tme
     
     
-    box <- qplot(y=x,x=namC,alpha = I(0.00001),data=plotData)+geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(namC)+tme
+    box <- qplot(y=x ,x=namC, alpha=I(0.00001), data=plotData) + geom_boxplot(width=0.3, fill=colbox) + xlab("") + ylab(namC) + tme
     
     if(!isTRUE(smooth))
     {
       
-      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
-      grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
-                                                          " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
+      png(paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_", namC, ".png"), width=775, height=280, res=res)
+      grid.arrange(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       dev.off()
     }else{
       
-      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
+      png(paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_", namC, ".png"), width=775, height=280, res=res)
       
       lo <- suppressWarnings(loess(outputVar~cuantVar[,namC]))
-      xl <- seq(min(cuantVar[,namC]),max(cuantVar[,namC]), (max(cuantVar[,namC]) - min(cuantVar[,namC]))/1000)
-      predicLoess <- try(predict(lo,xl), silent = T)
+      xl <- seq(min(cuantVar[,namC]), max(cuantVar[,namC]), (max(cuantVar[,namC]) - min(cuantVar[,namC]))/1000)
+      predicLoess <- try(predict(lo, xl), silent=T)
       
       
       if(is(predicLoess)[1]!="try-error")
-      {  loesMat <- data.frame(xl,predicLoess)
-      plo <- plo + geom_line(aes(x=xl,y=predicLoess),lwd=1.3,
-                             col=colsmot,data=loesMat) 
+      {  loesMat <- data.frame(xl, predicLoess)
+      plo <- plo + geom_line(aes(x=xl, y=predicLoess), lwd=1.3,
+                             col=colsmot, data=loesMat) 
       
       }else{
         lows <- lowess(outputVar~cuantVar[,namC])
-        lowsMat <- data.frame(x=lows$x,y=lows$y)
-        plo <- plo + geom_line(aes(x=x,y=y),lwd=1.3,col=colsmot,
-                               data=lowsMat)
+        lowsMat <- data.frame(x=lows$x, y=lows$y)
+        plo <- plo + geom_line(aes(x=x, y=y), lwd=1.3, col=colsmot, data=lowsMat)
       }
       
     }
     if(ghrp=="box")
     {
-      grid.arrange(plo,box,ncol = 2,top = textGrob(paste0(variety,
-                                                          " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))
+      grid.arrange(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       
     }else if(ghrp=="varPoints"){
       
-      datf  <- data.frame(x=dataSet[,namC],y=dataSet[,output])
-      datf1 <- data.frame(x=cuantVar[,namC],y=outputVar)
+      datf  <- data.frame(x=dataSet[,namC], y=dataSet[,output])
+      datf1 <- data.frame(x=cuantVar[,namC], y=outputVar)
       
-      plo1 <- ggplot() + geom_point(aes(x=x,y=y),colour="grey4",
-                                    fill="grey",data=datf,size=szpts,
-                                    shape = 21,alpha =0.6)
-      plo1 <- plo1 + geom_point(aes(x=x,y=y),data=datf1,
-                                colour="grey4",fill="red",
-                                size=szpts,shape = 21,alpha =0.6)
-      plo1 <- plo1 + theme_bw()+ ylab(ylabel) + xlab(namC) +tme
+      plo1 <- ggplot() + geom_point(aes(x=x, y=y), colour="grey4", fill="grey", data=datf, size=szpts, shape=21) # ,alpha =0.6
+      plo1 <- plo1 + geom_point(aes(x=x, y=y), data=datf1, colour="grey4", fill="red", size=szpts, shape=21) # ,alpha =0.6
+      plo1 <- plo1 + theme_bw()+ ylab(ylabel) + xlab(namC) + tme
       
-      grid.arrange(plo1,box,ncol = 2,top = textGrob(paste0(variety,
-                                                           " - ",namC), gp=gpar(cex=1.1,fontface = 'bold')))  
+      grid.arrange(plo1, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))  
       
       
     }else{stop("ghrp Invlid")}
@@ -307,23 +299,17 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
     dev.off()
   }
   
-  png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_Yield.png"),width=775,
-      height=280,res=res)
+  png(paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_Yield.png"), width=775, height=280, res=res)
   otpvar <- data.frame(x=outputVar)
   
-  ydplot <- ggplot()+geom_histogram(aes(x=x),data=otpvar,
-                                    breaks=seq(min(outputVar), max(outputVar),
-                                               length.out=nclass.Sturges(outputVar)),
-                                    colour = "gray1",fill=colbox
-  )+tme+xlab(ylabel)+ylab("Frecuencia")
+  ydplot <- ggplot()+geom_histogram(aes(x=x), data=otpvar, breaks=seq(min(outputVar), max(outputVar), length.out=nclass.Sturges(outputVar)), colour="gray1", fill=colbox)
+  ydplot <- ydplot + tme + xlab(ylabel) + ylab("Frecuencia")
   
   boxdf <- data.frame(x=ylabel,y=outputVar)
-  box <- qplot(y=y,x=x,alpha = I(0.00001),data=boxdf)+
-    geom_boxplot(width = 0.3,fill=colbox)+xlab("")+ylab(ylabel)+tme
+  box <- qplot(y=y, x=x, alpha=I(0.00001), data=boxdf) + geom_boxplot(width=0.3, fill=colbox) + xlab("") + ylab(ylabel) + tme
   
   
-  grid.arrange(ydplot,box,ncol = 2,top = textGrob(paste(variety,"_Yield"),
-                                                  gp=gpar(cex=1.1,fontface = 'bold')))
+  grid.arrange(ydplot, box, ncol=2, top=textGrob(paste(variety, "_Yield"), gp=gpar(cex=1.1, fontface='bold')))
   
   dev.off()
   
@@ -335,38 +321,30 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
   { 
     namCualVar <- names(cualVar)
     
-    write.table(summ[[1]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,
-                                 "summaryVariables.csv"),append=F,sep=",",row.names=F)
+    write.table(summ[[1]], paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "summaryVariables.csv"), append=F, sep=",", row.names=F)
     
     for(namC in namCualVar)
     {
       dp <- data.frame(x=cualVar[,namC],y=outputVar)
-      dotplot <- ggplot() + geom_dotplot(aes(x=x,y=y),data=dp,
-                                         binaxis = "y",stackdir = "center",colour="grey4",
-                                         fill=colpts,dotsize = szdts,na.rm=T,binwidth=diff(range(dp$y)/30))+ylab(ylabel)+xlab(namC)+tme+
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      dotplot <- ggplot() + geom_dotplot(aes(x=x, y=y), data=dp, binaxis="y", stackdir="center", colour="grey4", fill=colpts, dotsize=szdts, na.rm=T, binwidth=diff(range(dp$y)/30))
+      dotplot < dotplot + ylab(ylabel) + xlab(namC) + tme + theme(axis.text.x = element_text(angle=45, hjust=1))
       
+      boxplot <- ggplot() + geom_boxplot(width=0.3, aes(y=y, x=x), data=dp, fill=colbox) + tme + xlab(namC) + ylab(ylabel) + theme(axis.text.x = element_text(angle=45, hjust=1))
       
-      boxplot <- ggplot()+ geom_boxplot(width =0.3 ,aes(y=y,
-                                                        x=x),data = dp ,fill=colbox)+tme+xlab(namC)+
-        ylab(ylabel)+
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
-      
-      png(paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"_",namC,".png"),width=775,height=280,res=res)
-      grid.arrange(dotplot,boxplot,ncol=2,top=textGrob(paste(variety,"_",namC),             
-                                                       gp=gpar(cex=1.1,fontface="bold")))
+      png(paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_", namC, ".png"), width=775, height=280, res=res)
+      grid.arrange(dotplot, boxplot, ncol=2, top=textGrob(paste(variety, "_", namC), gp=gpar(cex=1.1, fontface="bold")))
       dev.off()
       
-      cat("\n", namC, "\n",file=paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T )
+      cat("\n", namC, "\n", file=paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "summaryVariables.csv"), append=T)
       
-      write.table(summ[[2]][[namC]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T,row.names=F,col.names =F,sep=",")
+      write.table(summ[[2]][[namC]],paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=T, row.names=F, col.names=F, sep=",")
       
     }
     
     
-  }else{ write.table(summ,paste0(variety,"/DESCRIPTIVE_ANALYSIS/",variety,"summaryVariables.csv"),append=F,sep=",",row.names=F)}
+  }else{ write.table(summ, paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "summaryVariables.csv"), append=F, sep=",", row.names=F)}
   
-  cat("The exploratory analysis is available in:",paste0("\t\t","VARIETY_ANALYSIS/",variety,"/DESCRIPTIVE_ANALYSIS/"))
+  cat("The exploratory analysis is available in:", paste0("\t\t", "VARIETY_ANALYSIS/", variety, "/DESCRIPTIVE_ANALYSIS/"))
 }
 
 
