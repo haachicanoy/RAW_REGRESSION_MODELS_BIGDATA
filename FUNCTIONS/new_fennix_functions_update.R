@@ -202,10 +202,10 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
                                 colbox="skyblue", colpts="greenyellow", colsmot="red",
                                 szpts=4, szdts=1.5)
 {
-  namsDataSet <- names(dataSet)  
+  namsDataSet <- names(dataSet)
   
   if(variety!="All")
-  {  
+  {
     dataSetV    <- subset(dataSet,dataSet[,segme]==variety)[,-segme]
   }else{dataSetV <- dataSet[,-segme]}
   
