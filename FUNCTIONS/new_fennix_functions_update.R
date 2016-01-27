@@ -253,6 +253,7 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       # grid.arrange(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g = arrangeGrob(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g2 = gTree(children=gList(g), cl=c("arrange", "ggplot"))
+      print.arrange = function(x, ...) grid.draw(x)
       ggsave(filename=paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_", namC, ".pdf"), plot=g2, width=10.33, height=5.33, units='in', dpi=300)
       # dev.off()
       
@@ -285,8 +286,9 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       # grid.arrange(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g = arrangeGrob(plo, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g2 = gTree(children=gList(g), cl=c("arrange", "ggplot"))
+      print.arrange = function(x, ...) grid.draw(x)
       
-    }else if(ghrp=="varPoints"){
+    } else if(ghrp=="varPoints"){
       
       datf  <- data.frame(x=dataSet[,namC], y=dataSet[,output])
       datf1 <- data.frame(x=cuantVar[,namC], y=outputVar)
@@ -298,6 +300,7 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       # grid.arrange(plo1, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g = arrangeGrob(plo1, box, ncol=2, top=textGrob(paste0(variety, " - ", namC), gp=gpar(cex=1.1, fontface='bold')))
       g2 = gTree(children=gList(g), cl=c("arrange", "ggplot"))
+      print.arrange = function(x, ...) grid.draw(x)
       
     } else{
       stop("ghrp Invlid")
@@ -318,6 +321,8 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
   # grid.arrange(ydplot, box, ncol=2, top=textGrob(paste(variety, "_Yield"), gp=gpar(cex=1.1, fontface='bold')))
   g = arrangeGrob(ydplot, box, ncol=2, top=textGrob(paste(variety, "_Yield"), gp=gpar(cex=1.1, fontface='bold')))
   g2 = gTree(children=gList(g), cl=c("arrange", "ggplot"))
+  print.arrange = function(x, ...) grid.draw(x)
+  ggsave(filename=paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_Yield.pdf"), plot=g2, width=10.33, height=5.33, units='in', dpi=300)
   
   # dev.off()
   
@@ -341,6 +346,8 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       # grid.arrange(dotplot, boxplot, ncol=2, top=textGrob(paste(variety, "_", namC), gp=gpar(cex=1.1, fontface="bold")))
       g = arrangeGrob(dotplot, boxplot, ncol=2, top=textGrob(paste(variety, "_", namC), gp=gpar(cex=1.1, fontface="bold")))
       g2 = gTree(children=gList(g), cl=c("arrange", "ggplot"))
+      print.arrange = function(x, ...) grid.draw(x)
+      ggsave(filename=paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "_", namC, ".pdf"), plot=g2, width=10.33, height=5.33, units='in', dpi=300)
       # dev.off()
       
       cat("\n", namC, "\n", file=paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "summaryVariables.csv"), append=T)
@@ -348,7 +355,7 @@ descriptiveGraphics <- function(variety, dataSet, inputs, segme, output,
       
     }
     
-  } else{
+  } else {
     write.table(summ, paste0(variety, "/DESCRIPTIVE_ANALYSIS/", variety, "summaryVariables.csv"), append=F, sep=",", row.names=F)
     }
   cat("The exploratory analysis is available in:", paste0("\t\t", "VARIETY_ANALYSIS/", variety, "/DESCRIPTIVE_ANALYSIS/"))
