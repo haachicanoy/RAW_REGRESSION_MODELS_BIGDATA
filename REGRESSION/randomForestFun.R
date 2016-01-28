@@ -241,7 +241,7 @@ randomForestFun <- function(variety,dirLocation=paste0(getwd(),"/"),saveWS=F,
     profData     <- unlist(lapply(profiles,function(x){!is.null(x)}))
     profRealData <- names(profData)[profData]
     
-    limProf <- if(length(profRealData) < 5){ length(profRealData)}else{5}
+    limProf <- if(length(profRealData)<5){length(profRealData)}else{length(profRealData)} # 5
     
     
     for(i in 1:limProf)
