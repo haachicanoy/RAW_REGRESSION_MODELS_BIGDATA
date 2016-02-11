@@ -18,7 +18,10 @@ completeSummary <-function(table)
     cualVar  <- as.data.frame(table[,factCol])
     
     if(ncol(cualVar)==1){names(cualVar) <- names(table)[factCol];summCual <- list(table(cualVar));names(summCual) <- names(table)[factCol]}
-    else{summCual <- apply(cualVar,2,table)}
+    else{
+      summCual <- lapply(seq(cualVar),function(x){table(cualVar[,x])})
+      names(summCual) <- names(cualVar)
+    }
     
     
   }else{cuantVar  <- table}  

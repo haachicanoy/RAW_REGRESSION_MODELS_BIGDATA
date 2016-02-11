@@ -1,3 +1,5 @@
+g=gc(); rm(list=ls())
+# To continue please restart R
 
 dirServ <- "C:/Users/haachicanoy/Documents/GitHub/RAW_REGRESSION_MODELS_BIGDATA"
 
